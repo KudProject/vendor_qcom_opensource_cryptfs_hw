@@ -467,7 +467,6 @@ int clear_hw_device_encryption_key()
 	return cryptfs_hw_wipe_key(map_usage(CRYPTFS_HW_KM_USAGE_DISK_ENCRYPTION));
 }
 
-#ifdef LEGACY_HW_DISK_ENCRYPTION
 static int get_keymaster_version()
 {
     int rc = -1;
@@ -480,7 +479,6 @@ static int get_keymaster_version()
 
     return mod->module_api_version;
 }
-#endif
 
 int should_use_keymaster()
 {
