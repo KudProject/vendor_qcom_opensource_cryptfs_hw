@@ -467,7 +467,6 @@ int clear_hw_device_encryption_key()
 	return cryptfs_hw_wipe_key(map_usage(CRYPTFS_HW_KM_USAGE_DISK_ENCRYPTION));
 }
 
-#ifdef LEGACY_HW_DISK_ENCRYPTION
 static int get_keymaster_version()
 {
     int rc = -1;
@@ -480,24 +479,18 @@ static int get_keymaster_version()
 
     return mod->module_api_version;
 }
-#endif
 
 int should_use_keymaster()
 {
-#ifdef LEGACY_HW_DISK_ENCRYPTION
-    /*
-     * HW FDE key should be tied to keymaster only if
-     * new Keymaster is available
-     */
-    int rc = 0;
-    if (get_keymaster_version() != KEYMASTER_MODULE_API_VERSION_1_0) {
-        SLOGI("Keymaster version is not 1.0");
-        return rc;
-    }
-#else
     /*
      * HW FDE key should be tied to keymaster
+     * if version is above 0.3. this is to
+     * support msm8909 go target.
      */
-    return 1;
-#endif
+    int rc = 1;
+    if (get_keymaster_version() == KEYMASTER_MODULE_API_VERSION_0_3) {
+        SLOGI("Keymaster version is 0.3");
+        rc = 0;
+    }
+    return rc;
 }
